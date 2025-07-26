@@ -3,9 +3,71 @@
 <head>
   <meta charset="UTF-8">
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="https://i.ibb.co/pvjcKjt/car-favicon.png">
+  <!-- Character Encoding -->
+  <meta charset="UTF-8">
+  
+  <!-- Viewport for Responsive Design -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  
+  <!-- Browser Compatibility -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <!-- SEO Meta Tags -->
+  <title>SoapyWheels | Premium Car Wash & Detailing</title>
+  <meta name="description" content="SoapyWheels offers premium car wash and detailing services with affordable pricing and doorstep convenience. Book your service today!">
+  <meta name="keywords" content="Car wash, SoapyWheels, auto detailing, car cleaning, premium car wash, doorstep car wash, vehicle polishing, car spa">
+  <meta name="author" content="SoapyWheels Team">
+  <meta name="robots" content="index, follow">
+  
+  <!-- Theme Color for Mobile Browsers -->
+  <meta name="theme-color" content="#0d6efd">
+  
+  <!-- Favicon & Apple Touch Icon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="https://i.ibb.co/pvjcKjt/car-favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://i.ibb.co/pvjcKjt/car-favicon.png">
+  
+  <!-- Open Graph (Facebook, LinkedIn) -->
+  <meta property="og:title" content="SoapyWheels - Premium Car Wash">
+  <meta property="og:description" content="Experience premium car cleaning and detailing with SoapyWheels. Book now for a spotless ride!">
+  <meta property="og:image" content="https://i.ibb.co/pvjcKjt/car-favicon.png">
+  <meta property="og:url" content="https://yourwebsite.com">
+  <meta property="og:type" content="website">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SoapyWheels - Premium Car Wash">
+  <meta name="twitter:description" content="Premium car wash and detailing services. Affordable & professional.">
+  <meta name="twitter:image" content="https://i.ibb.co/pvjcKjt/car-favicon.png">
+  
+  <!-- PWA Support -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  
+  <!-- Preconnect for Performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Structured Data (Google Rich Results) -->
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "AutoWash",
+  "name": "SoapyWheels Car Wash",
+  "image": "https://i.ibb.co/pvjcKjt/car-favicon.png",
+  "description": "Premium car wash and detailing service with doorstep booking.",
+  "address": {
+  "@type": "PostalAddress",
+  "streetAddress": "Your Address",
+  "addressLocality": "Your City",
+  "addressRegion": "Your State",
+  "postalCode": "000000",
+  "addressCountry": "IN"
+  },
+  "telephone": "+91-9788065553",
+  "url": "https://yourwebsite.com"
+  }
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SoapyWheels - Premium Car Wash</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
@@ -271,9 +333,8 @@
     <button onclick="closePopup()">OK</button>
   </div>
 </div>
-
 <script>
-  // Mobile menu toggle with cross icon
+  // Mobile menu toggle
   const menuToggle = document.getElementById('menu-toggle');
   const navLinks = document.getElementById('nav-links');
   let menuOpen = false;
@@ -291,7 +352,7 @@
     slide.style.transform = `translateX(-${index * 100}%)`;
   }, 4000);
 
-  // Popup functions
+  // Popup
   function showPopup(message) {
     document.getElementById('popup-message').innerText = message;
     document.getElementById('popup').style.display = 'flex';
@@ -302,116 +363,34 @@
 
   let bookingData = null;
 
-  // Booking form submission
-  document.getElementById('booking-form').addEventListener('submit', function(e){
+  // Booking form submit
+  document.getElementById('booking-form').addEventListener('submit', async function(e){
     e.preventDefault();
     bookingData = new FormData(this);
 
-    // Show popup confirmation
+    // Show confirmation + PDF button
     showPopup('Booking Confirmed!');
-
-    // Show separate PDF download button
     document.getElementById('pdf-container').style.display = 'block';
 
     // Send data to Web3Forms
-    fetch(this.action, {
+    await fetch(this.action, {
       method: this.method,
       body: bookingData
-    }).then(() => this.reset());
+    });
+
+    // Auto-send PDF to email
+    sendPdfToEmail(bookingData);
+
+    this.reset();
   });
 
-  // PDF generation with working logo load
-  document.getElementById('download-pdf').addEventListener('click', async function(){
+  // Manual PDF download
+  document.getElementById('download-pdf').addEventListener('click', function(){
     if (!bookingData) return;
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    // White background
-    doc.setFillColor(255, 255, 255);
-    doc.rect(0, 0, 210, 297, "F");
-
-    // Load Logo via fetch (works even if CORS restricted)
-    const logoUrl = "https://i.ibb.co/pvjcKjt/car-favicon.png";
-    try {
-      const response = await fetch(logoUrl);
-      const blob = await response.blob();
-      const reader = new FileReader();
-      reader.onloadend = function() {
-        const logoDataUrl = reader.result;
-
-        // Add Logo
-        doc.addImage(logoDataUrl, "PNG", 20, 10, 20, 20);
-
-        // Title
-        doc.setFontSize(24);
-        doc.setTextColor(255, 0, 0);
-        doc.text("SoapyWheels", 45, 22);
-        doc.setFontSize(14);
-        doc.setTextColor(80, 80, 80);
-        doc.text("Premium Car Wash Booking Confirmation", 45, 32);
-
-        // Divider
-        doc.setDrawColor(255, 0, 0);
-        doc.setLineWidth(1);
-        doc.line(20, 40, 190, 40);
-
-        // Booking Details
-        doc.setFontSize(16);
-        doc.setTextColor(0, 0, 0);
-        doc.text("Booking Details", 20, 55);
-
-        let y = 70;
-        doc.setFontSize(13);
-        doc.setTextColor(50, 50, 50);
-
-        const icons = {
-          name: "👤",
-          mobile: "📞",
-          email: "✉️",
-          car_type: "🚘",
-          vehicle_no: "🔢",
-          service: "🛠️",
-          location: "📍",
-          date: "📅",
-          message: "📝"
-        };
-
-        for (let [key, value] of bookingData.entries()) {
-          if(key !== "access_key" && key !== "subject" && key !== "from_name" && value.trim() !== "") {
-            let label = key.replace(/_/g, " ").toUpperCase();
-            let icon = icons[key] || "•";
-            doc.text(`${icon} ${label}: ${value}`, 20, y);
-            y += 10;
-          }
-        }
-
-        // QR Code
-        const qrCanvas = document.createElement("canvas");
-        new QRious({
-          element: qrCanvas,
-          value: "https://wa.me/919788065553",
-          size: 80
-        });
-        const qrDataUrl = qrCanvas.toDataURL("image/png");
-        doc.addImage(qrDataUrl, "PNG", 160, y, 30, 30);
-
-        // Footer
-        doc.setFontSize(12);
-        doc.setTextColor(120,120,120);
-        doc.text("Thank you for choosing SoapyWheels!", 20, y + 45);
-        doc.setFontSize(11);
-        doc.text("Visit us: Olympia Grande | WhatsApp for support", 20, y + 55);
-
-        // Save PDF
-        doc.save("SoapyWheels-Booking.pdf");
-      };
-      reader.readAsDataURL(blob);
-    } catch (error) {
-      alert("Logo failed to load, generating PDF without logo.");
-    }
+    generatePremiumPdf(bookingData).save("SoapyWheels-Booking.pdf");
   });
 
-  // Contact form submission
+  // Contact form
   document.getElementById('contact-form').addEventListener('submit', function(e){
     e.preventDefault();
     showPopup('Our team will contact you soon!');
@@ -420,6 +399,89 @@
       body: new FormData(this)
     }).then(() => this.reset());
   });
+
+  // Premium PDF Generator (With WhatsApp QR)
+  function generatePremiumPdf(formData){
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Background
+    doc.setFillColor(255, 255, 255);
+    doc.rect(0, 0, 210, 297, "F");
+
+    // Header
+    doc.setFontSize(28);
+    doc.setTextColor(255, 0, 0);
+    doc.text("SoapyWheels", 20, 20);
+
+    doc.setFontSize(14);
+    doc.setTextColor(100, 100, 100);
+    doc.text("Premium Car Wash Booking Confirmation", 20, 30);
+
+    // Divider
+    doc.setDrawColor(255, 0, 0);
+    doc.setLineWidth(0.8);
+    doc.line(20, 35, 190, 35);
+
+    // Section Title
+    doc.setFontSize(16);
+    doc.setTextColor(0, 0, 0);
+    doc.text("Booking Details", 20, 50);
+
+    let y = 65;
+    doc.setFontSize(13);
+    doc.setTextColor(40, 40, 40);
+
+    for (let [key, value] of formData.entries()) {
+      if(key !== "access_key" && key !== "subject" && key !== "from_name" && key !== "redirect" && key !== "replyto" && value.trim() !== "") {
+        let label = key.replace(/_/g, " ");
+        label = label.charAt(0).toUpperCase() + label.slice(1);
+        doc.text(`${label}: ${value}`, 20, y);
+        y += 10;
+      }
+    }
+
+    // WhatsApp QR Code
+    const qrCanvas = document.createElement("canvas");
+    new QRious({
+      element: qrCanvas,
+      value: "https://wa.me/919788065553",
+      size: 100
+    });
+    const qrDataUrl = qrCanvas.toDataURL("image/png");
+    doc.addImage(qrDataUrl, "PNG", 150, y + 10, 40, 40);
+
+    // Footer
+    doc.setFontSize(12);
+    doc.setTextColor(120,120,120);
+    doc.text("Thank you for choosing SoapyWheels!", 20, y + 65);
+    doc.setFontSize(11);
+    doc.text("Visit us: Olympia Grande | WhatsApp for support", 20, y + 75);
+
+    return doc;
+  }
+
+  // Send PDF to email using Web3Forms
+  async function sendPdfToEmail(formData){
+    const pdfDoc = generatePremiumPdf(formData);
+    const pdfBlob = pdfDoc.output('blob');
+
+    const payload = new FormData();
+    payload.append("access_key", "5c9f3bb1-af06-4e80-90d9-0514f611dc0e");
+    payload.append("subject", "Booking PDF - SoapyWheels");
+    payload.append("from_name", "SoapyWheels Website");
+    payload.append("email", formData.get("email") || "your-email@gmail.com");
+    payload.append("message", "Your premium booking confirmation PDF is attached.");
+    payload.append("file", new File([pdfBlob], "SoapyWheels-Booking.pdf", { type: "application/pdf" }));
+
+    await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      body: payload
+    });
+  }
 </script>
+
+<!-- Add QRious for QR Code generation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     </body>
     </html>
